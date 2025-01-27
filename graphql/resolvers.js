@@ -87,6 +87,12 @@ const resolvers = {
     // Author
     async createAuthor(parent, { name, userId }) {
       try {
+        // Check if the user already has an author associated with them
+        const existingAuthor = await Author.findOne({ where: { userId } });
+        if (existingAuthor) {
+          throw new Error('This user already has an author.');
+        }
+
         const author = await Author.create({ name, userId });
         return author;
       } catch (error) {
