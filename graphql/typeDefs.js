@@ -14,12 +14,22 @@ const typeDefs = gql`
     user: User
   }
 
+  type Post {
+    id: ID!
+    title: String
+    content: String
+    author: Author
+  }
+
   type Query {
     getUser(id: ID!): User
     getAllUsers: [User]
     getAuthor(id: ID!): Author
     getAuthorByUser(userId: ID!): Author
     getAllAuthor: [Author]
+    getPost(id: ID!): Post
+    getAllPosts: [Post]
+    getPostByAuthor(authorId: ID!): [Post]
   }
 
   type Mutation {
@@ -30,6 +40,10 @@ const typeDefs = gql`
     createAuthor(name: String!, userId: String!): Author
     updateAuthor(id: ID!, name: String!, userId: String!): Author
     deleteAuthor(id: ID!): Author
+
+    createPost(title: String!, content: String!, authorId: ID!): Post
+    updatePost(id: ID!, title: String, content: String, authorId: ID!): Post
+    deletePost(id: ID!): Post
   }
 `;
 
