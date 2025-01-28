@@ -1,7 +1,9 @@
 const Author = require('../models/author');
 const User = require('../models/user');
+const Post = require('../models/post');
 
 Author.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+Post.belongsTo(Author, { foreignKey: 'authorId', as: 'author' });
 User.hasOne(Author, { foreignKey: 'userId', as: 'author' });
 
 const resolvers = {
@@ -21,6 +23,38 @@ const resolvers = {
       } catch (error) {
         console.log(error)
         throw new Error('Error fetching all users');
+      }
+    },
+
+    //-- POST
+    async getPost(parent, { id }) {
+      try {
+        const post = await Post.findByPk(id);
+        return post;
+      } catch (error) {
+        throw new Error('Error fetching post');
+      }
+    },
+    async getAllPosts() {
+      try {
+        const post = await Post.findAll();
+        return post;
+      } catch (error) {
+        console.log(error)
+        throw new Error('Error fetching all posts');
+        
+      }
+    },
+    async getPostByAuthor(parent, {authorId}) {
+      try {
+        const post = await Post.findAll({
+          where: { authorId },
+          include: { model: Author, as: 'author'},
+        });
+        return post;
+      } catch (error) {
+        console.log(error)
+        throw new Error('Error fetching all posts');
         
       }
     },
@@ -125,7 +159,43 @@ const resolvers = {
         throw new Error('Error deleting author');
       }
     },
-  },
+
+    // --- POST
+    async createPost(parent, { title, content, authorId }) {
+      try {
+        const post = await Post.create({ title, content, authorId });
+        return post;
+      } catch (error) {
+        throw new Error('Error creating post');
+      }
+    },
+    async updatePost(parent, { id, title, content }) {
+      try {
+        const post = await Post.findByPk(id);
+        if (!post) {
+          throw new Error('Post not found');
+        }
+        post.title = title;
+        post.content = content;
+        await post.save();
+        return post;
+      } catch (error) {
+        throw new Error('Error updating post');
+      }
+    },
+    async deletePost(parent, { id }) {
+      try {
+        const post = await Post.findByPk(id);
+        if (!post) {
+          throw new Error('Post not found');
+        }
+        await post.destroy();
+        return post;
+      } catch (error) {
+        throw new Error('Error deleting post');
+      }
+    },
+  },  
   // Relationships
   Author: {
     user: async (author) => {
@@ -139,6 +209,12 @@ const resolvers = {
       return await Author.findOne({ where: { userId: user.id } });
     },
   },
+  Post: {
+    author: async (post) => {
+      return await Author.findByPk(post.authorId);
+    },
+  },
+  
 };
 
 module.exports = resolvers;
