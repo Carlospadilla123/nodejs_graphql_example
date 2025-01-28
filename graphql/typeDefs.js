@@ -30,7 +30,7 @@ const typeDefs = gql`
     getAllAuthor: [Author]
     getPost(id: ID!): Post
     getAllPosts: [Post]
-    getPostByAuthor(authorId: ID!): [Post]
+    getPostsByAuthor(authorId: ID!): [Post]
   }
 
   type Mutation {

@@ -61,7 +61,7 @@ const resolvers = {
         
       }
     },
-    async getPostByAuthor(parent, {authorId}) {
+    async getPostsByAuthor(parent, {authorId}) {
       try {
         const post = await Post.findAll({
           where: { authorId },
