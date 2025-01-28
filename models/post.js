@@ -12,4 +12,11 @@ const Post = db.define('Post', {
   },
 });
 
+Post.associate = (models) => {
+  Post.belongsTo(models.Author, {
+    foreignKey: "authorId",
+    as: "author",
+  });
+};
+
 module.exports = Post;

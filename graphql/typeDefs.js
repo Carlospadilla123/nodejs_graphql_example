@@ -12,6 +12,7 @@ const typeDefs = gql`
     id: ID!
     name: String!
     user: User
+    posts: [Post]
   }
 
   type Post {

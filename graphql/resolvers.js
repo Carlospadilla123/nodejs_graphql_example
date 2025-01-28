@@ -2,9 +2,25 @@ const Author = require('../models/author');
 const User = require('../models/user');
 const Post = require('../models/post');
 
-Author.belongsTo(User, { foreignKey: 'userId', as: 'user' });
-Post.belongsTo(Author, { foreignKey: 'authorId', as: 'author' });
-User.hasOne(Author, { foreignKey: 'userId', as: 'author' });
+// RELATIONSHIP: Option A
+// Author.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+// Author.hasMany(Post, { foreignKey: 'postId', as: 'posts' });
+// Post.belongsTo(Author, { foreignKey: 'authorId', as: 'author' });
+// User.hasOne(Author, { foreignKey: 'userId', as: 'author' });
+
+// RELATIONSHIP: Option B
+// Initialize models
+const models = {
+  User,
+  Author,
+  Post,
+};
+// Define associations
+Object.values(models).forEach((model) => {
+  if (model.associate) {
+    model.associate(models);
+  } 
+});
 
 const resolvers = {
   Query: {
@@ -202,6 +218,10 @@ const resolvers = {
       // This resolves the 'user' field in the Author type
       return await User.findByPk(author.userId);
     },
+    posts: async (author) => {
+      // This resolves the 'posts' field in the Author type
+      return await Post.findAll({ where: { authorId: author.id } });
+    },
   },
   User: {
     author: async (user) => {
@@ -211,6 +231,7 @@ const resolvers = {
   },
   Post: {
     author: async (post) => {
+      // This resolves the 'author' field in the User type
       return await Author.findByPk(post.authorId);
     },
   },

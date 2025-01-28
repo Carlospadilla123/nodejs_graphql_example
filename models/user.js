@@ -2,7 +2,6 @@
 
 const { DataTypes } = require('sequelize');
 const db = require('../utils/db');
-const Author = require('./author');
 
 const User = db.define('User', {
   firstName: {
@@ -14,5 +13,12 @@ const User = db.define('User', {
     allowNull: false
   },
 });
+
+User.associate = (models) => {
+  User.hasOne(models.Author, {
+    foreignKey: "userId",
+    as: "author",
+  });
+};
 
 module.exports = User;
